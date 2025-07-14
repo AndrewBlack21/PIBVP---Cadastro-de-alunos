@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for, flash, session
 from werkzeug.security import check_password_hash
 from app import app, DB_PATH
 from app.database import GerenciadorAlunos
+import os
 
 db = GerenciadorAlunos(db_path=DB_PATH)
 
