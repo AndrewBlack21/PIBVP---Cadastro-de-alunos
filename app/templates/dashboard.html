@@ -65,12 +65,12 @@
     </div>
   </div>
   <div class="card-footer text-center">
-    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm"
-      >Página Inicial</a
-    >
-    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm"
-      >Sair (Logout)</a
-    >
-  </div>
+        {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('painel_admin') }}" class="btn btn-success btn-sm">Painel do Administrador</a>
+        {% endif %}
+        <a href="{{ url_for('configurar_chave') }}" class="btn btn-info btn-sm">Configurar Chave</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Sair</a>
+    </div>
+</div>
 </div>
 {% endblock %}

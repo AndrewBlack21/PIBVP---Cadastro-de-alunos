@@ -1,0 +1,81 @@
+{% extends "base.html" %} {% block title %}Painel do Administrador{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <h2 class="mb-4">Painel do Administrador</h2>
+  <div class="row">
+    <div class="col-md-5">
+      <div class="card h-100">
+        <div class="card-header">
+          <strong>Cadastrar Novo Professor</strong>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('painel_admin') }}">
+            <div class="mb-3">
+              <label for="username" class="form-label"
+                >Nome de Usuário do Professor</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Senha Provisória</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              Cadastrar Professor
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card h-100">
+        <div class="card-header">
+          <strong>Atividade de Hoje (Check-ins e Check-outs)</strong>
+        </div>
+        <div class="card-body">
+          {% if registros %}
+          <ul class="list-group list-group-flush">
+            {% for registro in registros %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <strong>{{ registro.nome }}</strong>
+                <br />
+                <small class="text-muted">{{ registro.horario }}</small>
+              </div>
+              {% if registro.tipo == 'check-in' %}
+              <span class="badge bg-success rounded-pill">ENTRADA</span>
+              {% else %}
+              <span class="badge bg-danger rounded-pill">SAÍDA</span>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-center text-muted">
+            Nenhum registro encontrado para hoje.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-4">
+    <a href="{{ url_for('dashboard') }}">Voltar para o Dashboard Principal</a>
+  </div>
+</div>
+{% endblock %}

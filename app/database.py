@@ -1,8 +1,10 @@
-# app/database.py
+# app/database.py (versão completa e atualizada)
 import sqlite3
 from datetime import datetime
 import os
-from werkzeug.security import generate_password_hash # Importa a função para criptografar a senha
+from werkzeug.security import generate_password_hash
+
+CHAVE_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'chave_registro.txt')
 
 class GerenciadorAlunos:
     def __init__(self, db_path):
@@ -16,6 +18,7 @@ class GerenciadorAlunos:
     def criar_tabelas(self):
         with self._get_conn() as conn:
             cursor = conn.cursor()
+            # ... (tabelas alunos e registros sem alteração) ...
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS alunos (
                 id TEXT PRIMARY KEY,
@@ -30,37 +33,52 @@ class GerenciadorAlunos:
                 horario TEXT NOT NULL,
                 FOREIGN KEY (aluno_id) REFERENCES alunos (id)
             )""")
-            # NOVA TABELA PARA USUÁRIOS DA INSTITUIÇÃO (PROFESSORES)
+            # MUDANÇA: Adicionada a coluna 'role' para diferenciar admin de professor
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS usuarios (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL
+                password_hash TEXT NOT NULL,
+                role TEXT NOT NULL 
             )""")
             conn.commit()
 
-    # --- Funções de Usuário ---
-    def criar_usuario(self, username, password):
-        """Cria um novo usuário com senha criptografada."""
+    # MUDANÇA: A função agora aceita um 'role'
+    def criar_usuario(self, username, password, role):
+        """Cria um novo usuário (admin ou professor) com senha criptografada."""
         password_hash = generate_password_hash(password)
         with self._get_conn() as conn:
             try:
                 cursor = conn.cursor()
-                cursor.execute("INSERT INTO usuarios (username, password_hash) VALUES (?, ?)", (username, password_hash))
+                cursor.execute("INSERT INTO usuarios (username, password_hash, role) VALUES (?, ?, ?)", (username, password_hash, role))
                 conn.commit()
                 return True
-            except sqlite3.IntegrityError: # Ocorre se o username já existir
+            except sqlite3.IntegrityError:
                 return False
 
+    # ... (O resto do arquivo, incluindo as funções de aluno e de chave, continua exatamente igual) ...
+    def definir_chave_registro(self, chave):
+        try:
+            with open(CHAVE_FILE_PATH, 'w') as f:
+                f.write(chave)
+            return True
+        except Exception:
+            return False
+
+    def obter_chave_registro(self):
+        try:
+            with open(CHAVE_FILE_PATH, 'r') as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return ""
+
     def buscar_usuario_por_nome(self, username):
-        """Busca um usuário pelo seu nome de usuário."""
         with self._get_conn() as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM usuarios WHERE username = ?", (username,))
             return cursor.fetchone()
 
-    # --- Funções de Aluno (sem alterações) ---
     def registrar_aluno(self, nome, telefone):
         with self._get_conn() as conn:
             cursor = conn.cursor()
@@ -112,11 +130,10 @@ class GerenciadorAlunos:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM alunos WHERE id IS NOT NULL ORDER BY nome")
             return cursor.fetchall()
-        
+            
     def verificar_se_existem_usuarios(self):
-        """Verifica se há pelo menos um usuário na tabela de usuarios. Retorna True ou False."""
         with self._get_conn() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(id) FROM usuarios")
+            cursor.execute("SELECT COUNT(id) FROM usuarios WHERE role = 'admin'")
             count = cursor.fetchone()[0]
             return count > 0
