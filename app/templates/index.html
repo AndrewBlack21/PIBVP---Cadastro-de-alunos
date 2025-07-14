@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %}Página Inicial{% endblock %} {% block
+content %}
+<div class="card text-center" style="background-color: #fff3cd; mt-4">
+  <div class="card-header fs-1">Instituição PIB - VP</div>
+  <div class="card-body">
+    <h5 class="card-title">Selecione seu tipo de acesso</h5>
+    <p class="card-text">
+      Acesse como aluno para fazer check-in/out ou como instituição para
+      gerenciar.
+    </p>
+    <div class="d-grid gap-2 col-10 mx-auto">
+      <a href="{{ url_for('acesso_aluno') }}" class="btn btn-primary btn-lg"
+        >Área do Aluno</a
+      >
+      <a href="{{ url_for('dashboard') }}" class="btn btn-warning btn-lg"
+        >Área do Professor</a
+      >
+      <a
+        href="{{ url_for('registrar_aluno') }}"
+        class="btn btn-outline-success btn-lg mt-2"
+        >Registrar Novo Aluno</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

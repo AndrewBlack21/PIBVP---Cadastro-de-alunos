@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %}Status de {{ aluno.nome }}{% endblock
+%} {% block content %}
+<div class="card text-center" style="background-color: #fff3cd">
+  <div class="card-header">Olá, {{ aluno.nome }}!</div>
+  <div class="card-body">
+    {% if status_atual == 'check-in' %}
+    <h5 class="card-title text-success">Status: Check-in Realizado</h5>
+    <p class="card-text">Você está atualmente dentro da instituição.</p>
+    <form
+      action="{{ url_for('registrar_evento_web', aluno_id=aluno.id) }}"
+      method="POST"
+    >
+      <input type="hidden" name="tipo_evento" value="check-out" />
+      <button type="submit" class="btn btn-danger btn-lg w-100">
+        Fazer Check-out
+      </button>
+    </form>
+    {% else %}
+    <h5 class="card-title text-muted">Status: Check-out Realizado</h5>
+    <p class="card-text">Você não possui um check-in ativo.</p>
+    <form
+      action="{{ url_for('registrar_evento_web', aluno_id=aluno.id) }}"
+      method="POST"
+    >
+      <input type="hidden" name="tipo_evento" value="check-in" />
+      <button type="submit" class="btn btn-success btn-lg w-100">
+        Fazer Check-in
+      </button>
+    </form>
+    {% endif %}
+  </div>
+  <div class="card-footer text-center">
+    <a href="{{ url_for('acesso_aluno') }}">Sair (Acessar com outro ID)</a>
+  </div>
+</div>
+{% endblock %}

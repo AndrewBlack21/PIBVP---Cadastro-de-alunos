@@ -1,0 +1,44 @@
+{% extends "base.html" %} {% block title %}Registrar Novo Aluno{% endblock %} {%
+block content %}
+<div class="card">
+  <div class="card-header">
+    <strong>Registrar Novo Aluno</strong>
+  </div>
+  <div class="card-body">
+    <p>
+      Preencha os dados abaixo para cadastrar um novo aluno no sistema. O ID
+      será gerado automaticamente.
+    </p>
+    <hr />
+    <form method="POST">
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome Completo</label>
+        <input
+          type="text"
+          class="form-control"
+          id="nome"
+          name="nome"
+          required
+          placeholder="Digite o nome do aluno"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="telefone" class="form-label">Telefone (Opcional)</label>
+        <input
+          type="tel"
+          class="form-control"
+          id="telefone"
+          name="telefone"
+          placeholder="(XX) XXXXX-XXXX"
+        />
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">
+          Registrar Aluno
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

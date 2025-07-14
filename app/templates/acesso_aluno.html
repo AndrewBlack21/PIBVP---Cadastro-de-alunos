@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title %}Acesso Aluno{% endblock %} {% block
+content %}
+<div class="card" style="background-color: #fff3cd; mt-4">
+  <div class="card-header">Acesso do Aluno</div>
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label for="aluno_id" class="form-label">Digite seu ID Único</label>
+        <input
+          type="text"
+          class="form-control"
+          id="aluno_id"
+          name="aluno_id"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Acessar</button>
+    </form>
+  </div>
+  <div class="card-footer text-center">
+    <a href="{{ url_for('index') }}">Voltar</a>
+  </div>
+</div>
+{% endblock %}

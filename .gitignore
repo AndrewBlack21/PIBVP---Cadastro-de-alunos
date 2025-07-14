@@ -1,0 +1,18 @@
+# .gitignore
+
+# Ambientes Virtuais
+venv/
+*.pyenv
+.env
+
+# Arquivos de Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de Banco de Dados local
+data/academia.db
+
+# Arquivos de configuração de IDEs
+.vscode/
+.idea/

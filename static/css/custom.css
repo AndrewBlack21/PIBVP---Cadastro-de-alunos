@@ -1,0 +1,32 @@
+/* static/css/custom.css */
+
+/* Deixa o fundo da página com um cinza bem claro */
+body {
+  background-color: #f2f5f8;
+}
+
+/* Adiciona uma sombra mais suave e um leve arredondamento aos cartões */
+.card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Deixa os cabeçalhos dos cartões com a fonte um pouco mais grossa e centralizada */
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Customiza a cor principal do botão */
+.btn-primary {
+  background-color: #0056b3; /* Um azul um pouco mais escuro */
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #004494; /* Cor ao passar o mouse */
+}

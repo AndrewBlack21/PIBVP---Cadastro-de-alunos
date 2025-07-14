@@ -1,0 +1,53 @@
+{% extends "base.html" %} {% block title %}Configuração Inicial{% endblock %} {%
+block content %}
+<div class="card border-warning">
+  <div class="card-header bg-warning text-dark">
+    <strong>Configuração do Primeiro Administrador</strong>
+  </div>
+  <div class="card-body">
+    <p>
+      Bem-vindo! O sistema detectou que nenhum usuário administrador foi
+      configurado ainda. Por favor, crie a primeira conta para continuar.
+    </p>
+    <p>Esta página só ficará acessível desta vez.</p>
+    <hr />
+    <form method="POST">
+      <div class="mb-3">
+        <label for="username" class="form-label">Nome de Usuário</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          name="username"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password_confirm" class="form-label"
+          >Confirme a Senha</label
+        >
+        <input
+          type="password"
+          class="form-control"
+          id="password_confirm"
+          name="password_confirm"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">
+        Criar Conta de Administrador
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

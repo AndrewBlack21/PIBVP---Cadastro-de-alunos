@@ -1,0 +1,76 @@
+{% extends "base.html" %} {% block title %}Dashboard da Instituição{% endblock
+%} {% block content %}
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#registros"
+          >Registros de Hoje</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#alunos"
+          >Alunos Cadastrados</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="registros">
+        <h5 class="card-title">Atividade de Hoje</h5>
+        {% if registros %}
+        <ul class="list-group">
+          {% for registro in registros %}
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <strong>{{ registro.nome }}</strong>
+              <br />
+              <small class="text-muted">{{ registro.horario }}</small>
+            </div>
+            {% if registro.tipo == 'check-in' %}
+            <span class="badge bg-success rounded-pill">ENTRADA</span>
+            {% else %}
+            <span class="badge bg-danger rounded-pill">SAÍDA</span>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-center text-muted">
+          Nenhum registro encontrado para hoje.
+        </p>
+        {% endif %}
+      </div>
+      <div class="tab-pane fade" id="alunos">
+        <h5 class="card-title">Lista Geral de Alunos</h5>
+        {% if alunos %}
+        <ul class="list-group">
+          {% for aluno in alunos %}
+          <li class="list-group-item">
+            <strong>{{ aluno.nome }}</strong> (ID: {{ aluno.id }})
+            <br />
+            <small class="text-muted"
+              >Telefone: {{ aluno.telefone or 'Não informado' }}</small
+            >
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-center text-muted">Nenhum aluno cadastrado.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="card-footer text-center">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm"
+      >Página Inicial</a
+    >
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm"
+      >Sair (Logout)</a
+    >
+  </div>
+</div>
+{% endblock %}
