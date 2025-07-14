@@ -1,4 +1,4 @@
-# app/routes.py
+# app/routes.py (versão final e limpa)
 from flask import render_template, request, redirect, url_for, flash, session, abort
 from werkzeug.security import check_password_hash
 from functools import wraps
@@ -22,7 +22,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get('logged_in') or session.get('role') != 'admin':
-            abort(403) # Proibido
+            abort(403)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -41,34 +41,61 @@ def login():
         if user and check_password_hash(user['password_hash'], password):
             session['logged_in'] = True
             session['username'] = user['username']
-            session['role'] = user['role'] # Salva o papel do usuário na sessão
+            session['role'] = user['role']
             return redirect(url_for('dashboard'))
         else:
             flash('Usuário ou senha incorretos.', 'danger')
+            
     return render_template('login.html')
+
+# A ROTA /criar-primeiro-admin FOI REMOVIDA
 
 @app.route('/logout')
 def logout():
-    session.clear() # Limpa toda a sessão
+    session.clear()
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('index'))
 
 @app.route('/dashboard')
-@login_required # Qualquer usuário logado (admin ou professor) pode ver
+@login_required
 def dashboard():
     registros = db.get_registros_do_dia()
     alunos = db.get_todos_os_alunos()
     return render_template('dashboard.html', registros=registros, alunos=alunos)
 
-# --- Rotas do Administrador ---
+@app.route('/painel-admin', methods=['GET', 'POST'])
+@admin_required
+def painel_admin():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        success = db.criar_usuario(username, password, role='professor')
+        if success:
+            flash(f'Professor "{username}" cadastrado com sucesso!', 'success')
+        else:
+            flash(f'O nome de usuário "{username}" já existe.', 'danger')
+        return redirect(url_for('painel_admin'))
+    registros = db.get_registros_do_dia()
+    return render_template('painel_admin.html', registros=registros)
 
-
-# --- Rotas do Professor (e Admin) ---
+# ... (O resto de todas as outras rotas continua exatamente igual) ...
+@app.route('/configurar-chave', methods=['GET', 'POST'])
+@login_required
+def configurar_chave():
+    if request.method == 'POST':
+        nova_chave = request.form.get('chave')
+        if db.definir_chave_registro(nova_chave):
+            flash('Chave de inscrição atualizada com sucesso!', 'success')
+        else:
+            flash('Erro ao salvar a chave.', 'danger')
+        return redirect(url_for('configurar_chave'))
+    chave_atual = db.obter_chave_registro()
+    return render_template('configurar_chave.html', chave_atual=chave_atual)
+    
 @app.route('/registrar', methods=['GET', 'POST'])
-@login_required # Qualquer usuário logado pode registrar alunos
+@login_required
 def registrar_aluno():
     if request.method == 'POST':
-        # ... (lógica de registrar aluno sem alteração) ...
         nome = request.form['nome']
         telefone = request.form['telefone']
         if not nome:
@@ -85,22 +112,6 @@ def registro_sucesso():
     nome_aluno = request.args.get('nome_aluno')
     return render_template('registro_sucesso.html', novo_id=novo_id, nome_aluno=nome_aluno)
 
-@app.route('/configurar-chave', methods=['GET', 'POST'])
-@login_required
-def configurar_chave():
-    if request.method == 'POST':
-        # ... (lógica de configurar chave sem alteração) ...
-        nova_chave = request.form.get('chave')
-        if db.definir_chave_registro(nova_chave):
-            flash('Chave de inscrição atualizada com sucesso!', 'success')
-        else:
-            flash('Erro ao salvar a chave.', 'danger')
-        return redirect(url_for('configurar_chave'))
-    chave_atual = db.obter_chave_registro()
-    return render_template('configurar_chave.html', chave_atual=chave_atual)
-
-# --- Rotas Públicas (Aluno) ---
-# ... (todas as rotas de /inscricao, /aluno, etc. continuam iguais e sem decoradores) ...
 @app.route('/inscricao', methods=['GET', 'POST'])
 def inscricao():
     if request.method == 'POST':
@@ -148,24 +159,5 @@ def registrar_evento_web(aluno_id):
     acao = "Check-in" if tipo_evento == "check-in" else "Check-out"
     flash(f'{acao} realizado com sucesso!', 'info')
     return redirect(url_for('status_aluno', aluno_id=aluno_id))
-
-@app.route('/painel-admin', methods=['GET', 'POST'])
-@admin_required # Apenas administradores podem acessar
-def painel_admin():
-    # Lógica para o formulário de cadastro de professor
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        # Cria o usuário com o papel 'professor'
-        success = db.criar_usuario(username, password, role='professor')
-        if success:
-            flash(f'Professor "{username}" cadastrado com sucesso!', 'success')
-        else:
-            flash(f'O nome de usuário "{username}" já existe.', 'danger')
-        return redirect(url_for('painel_admin')) # Redireciona para a mesma página
-
-    # Lógica para exibir os registros do dia
-    registros = db.get_registros_do_dia()
-    return render_template('painel_admin.html', registros=registros)
 
 app.secret_key = os.environ.get('SECRET_KEY', 'uma-chave-padrao-para-desenvolvimento')
